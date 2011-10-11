@@ -10,7 +10,7 @@
 Summary: Library that implements an embeddable SQL database engine
 Name: sqlite
 Version: %{rpmver}
-Release: 1%{?dist}
+Release: 1.el6.R
 License: Public Domain
 Group: Applications/Databases
 URL: http://www.sqlite.org/
@@ -183,7 +183,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Wed May 25 2011 Panu Matilainen <pmatilai@redhat.com> - 3.7.6.3-1
+* Wed May 25 2011 Panu Matilainen <pmatilai@redhat.com> - 3.7.6.3-1.el6.R
 - update to 3.7.6.3 (http://www.sqlite.org/releaselog/3_7_6_3.html)
 
 * Sat May 21 2011 Peter Robinson <pbrobinson@gmail.com> - 3.7.6.2-3
