@@ -3,30 +3,24 @@
 %bcond_with static
 %bcond_without check
 
-%define realver 3070603
-%define docver 3070600
+%define realver 3070701
+%define docver 3070701
 %define rpmver %(echo %{realver}|sed -e "s/00//g" -e "s/0/./g")
 
 Summary: Library that implements an embeddable SQL database engine
 Name: sqlite
 Version: %{rpmver}
-Release: 1.el6.R
+Release: 1%{?dist}.R
 License: Public Domain
 Group: Applications/Databases
 URL: http://www.sqlite.org/
 Source0: http://www.sqlite.org/sqlite-src-%{realver}.zip
 Source1: http://www.sqlite.org/sqlite-doc-%{docver}.zip
-# Fix build with --enable-load-extension, upstream ticket #3137
-Patch1: sqlite-3.6.12-libdl.patch
 # Support a system-wide lemon template
-Patch2: sqlite-3.6.23-lemon-system-template.patch
-# Fixup test-suite expectations wrt SQLITE_DISABLE_DIRSYNC 
-Patch3: sqlite-3.7.4-wal2-nodirsync.patch
+Patch1: sqlite-3.6.23-lemon-system-template.patch
 # Shut up stupid tests depending on system settings of allowed open fd's
-Patch4: sqlite-3.7.6-stupid-openfiles-test.patch
+Patch2: sqlite-3.7.7.1-stupid-openfiles-test.patch
 BuildRequires: ncurses-devel readline-devel glibc-devel
-# libdl patch needs
-BuildRequires: autoconf
 %if %{with tcl}
 BuildRequires: /usr/bin/tclsh
 BuildRequires: tcl-devel
@@ -93,16 +87,13 @@ This package contains the tcl modules for %{name}.
 
 %prep
 %setup -q -a1 -n %{name}-src-%{realver}
-%patch1 -p1 -b .libdl
-%patch2 -p1 -b .lemon-system-template
-%patch3 -p1 -b .wal2-nodirsync
-%patch4 -p1 -b .stupid-openfiles-test
+%patch1 -p1 -b .lemon-system-template
+%patch2 -p1 -b .stupid-openfiles-test
 
 # Remove cgi-script erroneously included in sqlite-doc-3070500
 rm -f %{name}-doc-%{realver}/search
 
 %build
-autoconf
 export CFLAGS="$RPM_OPT_FLAGS -DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_DISABLE_DIRSYNC=1 -DSQLITE_ENABLE_FTS3=3 -DSQLITE_ENABLE_RTREE=1 -DSQLITE_SECURE_DELETE=1 -DSQLITE_ENABLE_UNLOCK_NOTIFY=1 -Wall -fno-strict-aliasing"
 %configure %{!?with_tcl:--disable-tcl} \
            --enable-threadsafe \
@@ -183,7 +174,14 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Wed May 25 2011 Panu Matilainen <pmatilai@redhat.com> - 3.7.6.3-1.el6.R
+* Thu Jan 26 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.7.7.1-1.R
+- rebuilt for EL
+
+* Wed Jul 13 2011 Panu Matilainen <pmatilai@redhat.com> - 3.7.7.1-1
+- update to 3.7.7.1 (http://www.sqlite.org/releaselog/3_7_7_1.html)
+- autoconf no longer needed for build, libdl check finally upstreamed
+
+* Wed May 25 2011 Panu Matilainen <pmatilai@redhat.com> - 3.7.6.3-1
 - update to 3.7.6.3 (http://www.sqlite.org/releaselog/3_7_6_3.html)
 
 * Sat May 21 2011 Peter Robinson <pbrobinson@gmail.com> - 3.7.6.2-3
